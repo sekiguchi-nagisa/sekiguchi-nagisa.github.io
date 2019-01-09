@@ -9,6 +9,10 @@
   
   <url>
     <loc>https://sekiguchi-nagisa.github.io/archives/</loc>
+  </url>
+  
+  <url>
+    <loc>https://sekiguchi-nagisa.github.io/categories/</loc>
     <priority>0</priority>
   </url>
   
