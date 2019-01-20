@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Linuxにおけるttydefcharsが役に立たない</title>
+	
+	<meta name="description" content="">
+	<meta name="image" content="">
+	
+	<meta itemprop="name" content="Linuxにおけるttydefcharsが役に立たない">
+	<meta itemprop="description" content="">
+	<meta itemprop="image" content="">
+	
+	<meta name="og:title" content="Linuxにおけるttydefcharsが役に立たない">
+	<meta name="og:description" content="">
+	
+	<meta name="og:url" content="https://sekiguchi-nagisa.github.io/posts/20190120_162241/">
+	<meta name="og:site_name" content="Linuxにおけるttydefcharsが役に立たない">
+	<meta name="og:type" content="article">
+	
+	<meta name="article:tag" content="tty linux ">
+	<link rel="stylesheet" type="text/css" href="https://sekiguchi-nagisa.github.io/css/style.css">
+	
+	
+</head>
+
+<body>
+
+<header>
+	
+	<a href="https://sekiguchi-nagisa.github.io/" style="float: left;color:#ff3b30;">開発とかの備忘録</a>
+	
+	&nbsp;&nbsp;<a href="https://sekiguchi-nagisa.github.io/archives/" style="color:#777;">Archives</a>&nbsp;&nbsp;<a href="https://sekiguchi-nagisa.github.io/about/" style="color:#777;">About</a>
+	
+	<a href="https://sekiguchi-nagisa.github.io/posts/index.xml" style="color:#777;float: right;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+</header>
+
+
+<div class="content">
+  <h1>Linuxにおけるttydefcharsが役に立たない</h1>
+  <aside><a href="/tags/tty/">tty</a></a>&nbsp;&nbsp;&nbsp;<a href="/tags/linux/">linux</a></a>&nbsp;&nbsp;&nbsp;</aside>
+  <p><p>Linuxでttyを初期化する方法（<code>stty sane</code>に相当）を調べていて、FreeBSDだと<code>cfmakesane</code>という関数があることがわかった。Linux/glibcだとこれがないので同等の関数を実装しようと思い、
+FreeBSDの実装(<a href="https://github.com/freebsd/freebsd/blob/master/lib/libc/gen/termios.c">freebsd/termios.c</a>)を見ると</p>
+<div class="highlight"><pre style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#b00040">void</span>
+<span style="color:#00f">cfmakesane</span>(<span style="color:#008000;font-weight:bold">struct</span> termios <span style="color:#666">*</span>t)
+{
+
+	t<span style="color:#666">-&gt;</span>c_cflag <span style="color:#666">=</span> TTYDEF_CFLAG;
+	t<span style="color:#666">-&gt;</span>c_iflag <span style="color:#666">=</span> TTYDEF_IFLAG;
+	t<span style="color:#666">-&gt;</span>c_lflag <span style="color:#666">=</span> TTYDEF_LFLAG;
+	t<span style="color:#666">-&gt;</span>c_oflag <span style="color:#666">=</span> TTYDEF_OFLAG;
+	t<span style="color:#666">-&gt;</span>c_ispeed <span style="color:#666">=</span> TTYDEF_SPEED;
+	t<span style="color:#666">-&gt;</span>c_ospeed <span style="color:#666">=</span> TTYDEF_SPEED;
+	memcpy(<span style="color:#666">&amp;</span>t<span style="color:#666">-&gt;</span>c_cc, ttydefchars, <span style="color:#008000;font-weight:bold">sizeof</span> ttydefchars);
+}</code></pre></div>
+<p><code>ttydefchars</code>を使って端末特殊文字を初期化しているようだ。
+この変数はLinux/glibcだと<code>sys/ttydefaults.h</code>に<a href="https://github.com/lattera/glibc/blob/master/sysdeps/unix/sysv/linux/sys/ttydefaults.h">次のように</a>定義されている。</p>
+<div class="highlight"><pre style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#bc7a00">#ifdef TTYDEFCHARS
+</span><span style="color:#bc7a00"></span>cc_t	ttydefchars[NCCS] <span style="color:#666">=</span> {
+	CEOF,	CEOL,	CEOL,	CERASE, CWERASE, CKILL, CREPRINT,
+	_POSIX_VDISABLE, CINTR,	CQUIT,	CSUSP,	CDSUSP,	CSTART,	CSTOP,	CLNEXT,
+	CDISCARD, CMIN,	CTIME,  CSTATUS, _POSIX_VDISABLE
+};
+<span style="color:#bc7a00">#undef TTYDEFCHARS</span></code></pre></div>
+<p>ところが、何も考えずにこれを利用しても正しく動作しない。（Ctrl-Cが効かない。。）
+<code>VINTR</code>などのマクロで特殊文字の値を設定するのだが(<a href="https://linuxjm.osdn.jp/html/LDP_man-pages/man3/termios.3.html">man</a>)、<code>ttydefchars</code>で設定している初期値と<a href="https://github.com/lattera/glibc/blob/master/termios/termios.h">termios.h</a>で定義されている<code>V*</code>マクロが明らかに対応していない。</p>
+<div class="highlight"><pre style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#408080;font-style:italic">/* c_cc characters */</span>
+<span style="color:#bc7a00">#define VINTR 0
+</span><span style="color:#bc7a00">#define VQUIT 1
+</span><span style="color:#bc7a00">#define VERASE 2
+</span><span style="color:#bc7a00">#define VKILL 3
+</span><span style="color:#bc7a00">#define VEOF 4
+</span><span style="color:#bc7a00">#define VTIME 5
+</span><span style="color:#bc7a00">#define VMIN 6
+</span><span style="color:#bc7a00">#define VSWTC 7
+</span><span style="color:#bc7a00">#define VSTART 8
+</span><span style="color:#bc7a00">#define VSTOP 9
+</span><span style="color:#bc7a00">#define VSUSP 10
+</span><span style="color:#bc7a00">#define VEOL 11
+</span><span style="color:#bc7a00">#define VREPRINT 12
+</span><span style="color:#bc7a00">#define VDISCARD 13
+</span><span style="color:#bc7a00">#define VWERASE 14
+</span><span style="color:#bc7a00">#define VLNEXT 15
+</span><span style="color:#bc7a00">#define VEOL2 16</span></code></pre></div>
+<p><code>ttydefchars</code>を使うと、<code>VINTR</code>の特殊文字の初期値が<code>CEOF</code>に設定されてしまい、
+本来設定されるべき<code>CINTR</code>にならない。</p>
+
+<p>ちなみに、Android NDKの<code>ttydefchars</code>は<a href="https://android.googlesource.com/platform/development/+/73a5a3b/ndk/platforms/android-20/include/sys/ttydefaults.h">次のように</a>なっていて、正しく初期値が設定されそうだ。</p>
+<div class="highlight"><pre style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#008000;font-weight:bold">const</span> cc_t ttydefchars[NCCS] <span style="color:#666">=</span> {
+	[VEOF] <span style="color:#666">=</span> CEOF,
+	[VEOL] <span style="color:#666">=</span> CEOL,
+	[VEOL2] <span style="color:#666">=</span> CEOL,
+	[VERASE] <span style="color:#666">=</span> CERASE,
+	[VWERASE] <span style="color:#666">=</span> CWERASE,
+	[VKILL] <span style="color:#666">=</span> CKILL,
+	[VREPRINT] <span style="color:#666">=</span> CREPRINT,
+	[<span style="color:#666">7</span>] <span style="color:#666">=</span> _POSIX_VDISABLE,	<span style="color:#408080;font-style:italic">/* spare */</span>
+	[VINTR] <span style="color:#666">=</span> CINTR,
+	[VQUIT] <span style="color:#666">=</span> CQUIT,
+	[VSUSP] <span style="color:#666">=</span> CSUSP,
+	[VDSUSP] <span style="color:#666">=</span> CDSUSP,
+	[VSTART] <span style="color:#666">=</span> CSTART,
+	[VSTOP] <span style="color:#666">=</span> CSTOP,
+	[VLNEXT] <span style="color:#666">=</span> CLNEXT,
+	[VDISCARD] <span style="color:#666">=</span> CDISCARD,
+	[VMIN] <span style="color:#666">=</span> CMIN,
+	[VTIME] <span style="color:#666">=</span> CTIME,
+	[VSTATUS] <span style="color:#666">=</span> CSTATUS,
+	[<span style="color:#666">19</span>] <span style="color:#666">=</span> _POSIX_VDISABLE,	<span style="color:#408080;font-style:italic">/* spare */</span>
+};</code></pre></div></p>
+</div>
+
+
+  <p>Written on Jan 20, 2019.</p>
+
+
+<footer>
+	<p>&copy; 2019 All rights reserved.</p>
+</footer>
+</body>
+</html>
