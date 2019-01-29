@@ -6,10 +6,115 @@
     <description>Recent content in Posts on 開発とかの備忘録</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja</language>
-    <lastBuildDate>Sun, 20 Jan 2019 16:22:41 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 29 Jan 2019 22:15:37 +0900</lastBuildDate>
     
         <atom:link href="https://sekiguchi-nagisa.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>fishのreadコマンド実装</title>
+      <link>https://sekiguchi-nagisa.github.io/posts/20190129_221536/</link>
+      <pubDate>Tue, 29 Jan 2019 22:15:37 +0900</pubDate>
+      
+      <guid>https://sekiguchi-nagisa.github.io/posts/20190129_221536/</guid>
+      <description>&lt;p&gt;シェルのreadコマンドは指定したデリミタ（デフォルトは改行）が来るまで文字列を読むので、単純な&lt;a href=&#34;https://github.com/mirror/busybox/blob/master/shell/shell_common.c&#34;&gt;実装&lt;/a&gt;では1byteずつ読む。&lt;/p&gt;
+
+&lt;p&gt;一方、&lt;a href=&#34;https://github.com/fish-shell/fish-shell/blob/master/src/builtin_read.cpp&#34;&gt;fish&lt;/a&gt;では読み込み対象のファイルディスクリプタの特性によって異なり、
+ttyやpipeのようなシークできないファイルディスクリプタに対しては1byteずつ、
+シークできるものに対しては&lt;code&gt;READ_CHUNK_SIZE&lt;/code&gt;ずつ読み込んでいる。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#00f&#34;&gt;read_in_chunks&lt;/span&gt;(&lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; fd, wcstring &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;buff, &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; split_null) {
+    &lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; exit_res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; STATUS_CMD_OK;
+    std&lt;span style=&#34;color:#666&#34;&gt;::&lt;/span&gt;string str;
+    &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; eof &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;false&lt;/span&gt;;
+    &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; finished &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;false&lt;/span&gt;;
+
+    &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;while&lt;/span&gt; (&lt;span style=&#34;color:#666&#34;&gt;!&lt;/span&gt;finished) {
+        &lt;span style=&#34;color:#b00040&#34;&gt;char&lt;/span&gt; inbuf[READ_CHUNK_SIZE];
+        &lt;span style=&#34;color:#b00040&#34;&gt;long&lt;/span&gt; bytes_read &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; read_blocked(fd, inbuf, READ_CHUNK_SIZE);
+
+        &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (bytes_read &lt;span style=&#34;color:#666&#34;&gt;&amp;lt;=&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;0&lt;/span&gt;) {
+            eof &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;true&lt;/span&gt;;
+            &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;break&lt;/span&gt;;
+        }
+
+        &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#b00040&#34;&gt;char&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;*&lt;/span&gt;end &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; std&lt;span style=&#34;color:#666&#34;&gt;::&lt;/span&gt;find(inbuf, inbuf &lt;span style=&#34;color:#666&#34;&gt;+&lt;/span&gt; bytes_read, split_null &lt;span style=&#34;color:#666&#34;&gt;?&lt;/span&gt; &lt;span style=&#34;color:#ba2121&#34;&gt;L&lt;/span&gt;&lt;span style=&#34;color:#ba2121&#34;&gt;&amp;#39;\0&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ba2121&#34;&gt;L&lt;/span&gt;&lt;span style=&#34;color:#ba2121&#34;&gt;&amp;#39;\n&amp;#39;&lt;/span&gt;);
+        &lt;span style=&#34;color:#b00040&#34;&gt;long&lt;/span&gt; bytes_consumed &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; end &lt;span style=&#34;color:#666&#34;&gt;-&lt;/span&gt; inbuf;  &lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;// must be signed for use in lseek
+&lt;/span&gt;&lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;&lt;/span&gt;        assert(bytes_consumed &lt;span style=&#34;color:#666&#34;&gt;&amp;lt;=&lt;/span&gt; bytes_read);
+        str.append(inbuf, bytes_consumed);
+        &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (bytes_consumed &lt;span style=&#34;color:#666&#34;&gt;&amp;lt;&lt;/span&gt; bytes_read) {
+            &lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;// We found a splitter. The +1 because we need to treat the splitter as consumed, but
+&lt;/span&gt;&lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;&lt;/span&gt;            &lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;// not append it to the string.
+&lt;/span&gt;&lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;&lt;/span&gt;            CHECK(lseek(fd, bytes_consumed &lt;span style=&#34;color:#666&#34;&gt;-&lt;/span&gt; bytes_read &lt;span style=&#34;color:#666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;1&lt;/span&gt;, SEEK_CUR) &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;1&lt;/span&gt;, STATUS_CMD_ERROR)
+            finished &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;true&lt;/span&gt;;
+        } &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (str.size() &lt;span style=&#34;color:#666&#34;&gt;&amp;gt;&lt;/span&gt; read_byte_limit) {
+            exit_res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; STATUS_READ_TOO_MUCH;
+            finished &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;true&lt;/span&gt;;
+        }
+    }
+
+    buff &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; str2wcstring(str);
+    &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (buff.empty() &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; eof) {
+        exit_res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; STATUS_CMD_ERROR;
+    }
+
+    &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;return&lt;/span&gt; exit_res;
+}
+
+&lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#00f&#34;&gt;read_one_char_at_a_time&lt;/span&gt;(&lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; fd, wcstring &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;buff, &lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; nchars, &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; split_null) {
+    &lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; exit_res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; STATUS_CMD_OK;
+    &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; eof &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;false&lt;/span&gt;;
+    size_t nbytes &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;0&lt;/span&gt;;
+
+    &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;while&lt;/span&gt; (&lt;span style=&#34;color:#008000&#34;&gt;true&lt;/span&gt;) {
+        &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; finished &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;false&lt;/span&gt;;
+        wchar_t res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;0&lt;/span&gt;;
+        mbstate_t state &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; {};
+
+        &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;while&lt;/span&gt; (&lt;span style=&#34;color:#666&#34;&gt;!&lt;/span&gt;finished) {
+            &lt;span style=&#34;color:#b00040&#34;&gt;char&lt;/span&gt; b;
+            &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (read_blocked(fd, &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;b, &lt;span style=&#34;color:#666&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#666&#34;&gt;&amp;lt;=&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;0&lt;/span&gt;) {
+                eof &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;true&lt;/span&gt;;
+                &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;break&lt;/span&gt;;
+            }
+
+            nbytes&lt;span style=&#34;color:#666&#34;&gt;++&lt;/span&gt;;
+            &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (MB_CUR_MAX &lt;span style=&#34;color:#666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;1&lt;/span&gt;) {
+                res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; (&lt;span style=&#34;color:#b00040&#34;&gt;unsigned&lt;/span&gt; &lt;span style=&#34;color:#b00040&#34;&gt;char&lt;/span&gt;)b;
+                finished &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;true&lt;/span&gt;;
+            } &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+                size_t sz &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; mbrtowc(&lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;res, &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;b, &lt;span style=&#34;color:#666&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;state);
+                &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (sz &lt;span style=&#34;color:#666&#34;&gt;==&lt;/span&gt; (size_t)&lt;span style=&#34;color:#666&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;1&lt;/span&gt;) {
+                    memset(&lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;state, &lt;span style=&#34;color:#666&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;sizeof&lt;/span&gt;(state));
+                } &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (sz &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; (size_t)&lt;span style=&#34;color:#666&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;2&lt;/span&gt;) {
+                    finished &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;true&lt;/span&gt;;
+                }
+            }
+        }
+
+        &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (nbytes &lt;span style=&#34;color:#666&#34;&gt;&amp;gt;&lt;/span&gt; read_byte_limit) {
+            exit_res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; STATUS_READ_TOO_MUCH;
+            &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;break&lt;/span&gt;;
+        }
+        &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (eof) &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;break&lt;/span&gt;;
+        &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#666&#34;&gt;!&lt;/span&gt;split_null &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; res &lt;span style=&#34;color:#666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ba2121&#34;&gt;L&lt;/span&gt;&lt;span style=&#34;color:#ba2121&#34;&gt;&amp;#39;\n&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;break&lt;/span&gt;;
+        &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (split_null &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; res &lt;span style=&#34;color:#666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ba2121&#34;&gt;L&lt;/span&gt;&lt;span style=&#34;color:#ba2121&#34;&gt;&amp;#39;\0&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;break&lt;/span&gt;;
+
+        buff.push_back(res);
+        &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (nchars &lt;span style=&#34;color:#666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; (size_t)nchars &lt;span style=&#34;color:#666&#34;&gt;&amp;lt;=&lt;/span&gt; buff.size()) {
+            &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;break&lt;/span&gt;;
+        }
+    }
+
+    &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;if&lt;/span&gt; (buff.empty() &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; eof) {
+        exit_res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; STATUS_CMD_ERROR;
+    }
+
+    &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;return&lt;/span&gt; exit_res;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;デリミタを超えて読み込んでしまっても&lt;code&gt;lseek&lt;/code&gt;を呼び出して読み込みオフセットをデリミタまで戻せばよい。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Linuxにおけるttydefcharsが役に立たない</title>

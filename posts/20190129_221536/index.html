@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>fishのreadコマンド実装</title>
+	
+	<meta name="description" content="">
+	<meta name="image" content="">
+	
+	<meta itemprop="name" content="fishのreadコマンド実装">
+	<meta itemprop="description" content="">
+	<meta itemprop="image" content="">
+	
+	<meta name="og:title" content="fishのreadコマンド実装">
+	<meta name="og:description" content="">
+	
+	<meta name="og:url" content="https://sekiguchi-nagisa.github.io/posts/20190129_221536/">
+	<meta name="og:site_name" content="fishのreadコマンド実装">
+	<meta name="og:type" content="article">
+	
+	<meta name="article:tag" content="shell ">
+	<link rel="stylesheet" type="text/css" href="https://sekiguchi-nagisa.github.io/css/style.css">
+	
+	
+</head>
+
+<body>
+
+<header>
+	
+	<a href="https://sekiguchi-nagisa.github.io/" style="float: left;color:#ff3b30;">開発とかの備忘録</a>
+	
+	&nbsp;&nbsp;<a href="https://sekiguchi-nagisa.github.io/archives/" style="color:#777;">Archives</a>&nbsp;&nbsp;<a href="https://sekiguchi-nagisa.github.io/about/" style="color:#777;">About</a>
+	
+	<a href="https://sekiguchi-nagisa.github.io/posts/index.xml" style="color:#777;float: right;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+</header>
+
+
+<div class="content">
+  <h1>fishのreadコマンド実装</h1>
+  <aside><a href="/tags/shell/">shell</a></a>&nbsp;&nbsp;&nbsp;</aside>
+  <p><p>シェルのreadコマンドは指定したデリミタ（デフォルトは改行）が来るまで文字列を読むので、単純な<a href="https://github.com/mirror/busybox/blob/master/shell/shell_common.c">実装</a>では1byteずつ読む。</p>
+
+<p>一方、<a href="https://github.com/fish-shell/fish-shell/blob/master/src/builtin_read.cpp">fish</a>では読み込み対象のファイルディスクリプタの特性によって異なり、
+ttyやpipeのようなシークできないファイルディスクリプタに対しては1byteずつ、
+シークできるものに対しては<code>READ_CHUNK_SIZE</code>ずつ読み込んでいる。</p>
+<div class="highlight"><pre style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#008000;font-weight:bold">static</span> <span style="color:#b00040">int</span> <span style="color:#00f">read_in_chunks</span>(<span style="color:#b00040">int</span> fd, wcstring <span style="color:#666">&amp;</span>buff, <span style="color:#b00040">bool</span> split_null) {
+    <span style="color:#b00040">int</span> exit_res <span style="color:#666">=</span> STATUS_CMD_OK;
+    std<span style="color:#666">::</span>string str;
+    <span style="color:#b00040">bool</span> eof <span style="color:#666">=</span> <span style="color:#008000">false</span>;
+    <span style="color:#b00040">bool</span> finished <span style="color:#666">=</span> <span style="color:#008000">false</span>;
+
+    <span style="color:#008000;font-weight:bold">while</span> (<span style="color:#666">!</span>finished) {
+        <span style="color:#b00040">char</span> inbuf[READ_CHUNK_SIZE];
+        <span style="color:#b00040">long</span> bytes_read <span style="color:#666">=</span> read_blocked(fd, inbuf, READ_CHUNK_SIZE);
+
+        <span style="color:#008000;font-weight:bold">if</span> (bytes_read <span style="color:#666">&lt;=</span> <span style="color:#666">0</span>) {
+            eof <span style="color:#666">=</span> <span style="color:#008000">true</span>;
+            <span style="color:#008000;font-weight:bold">break</span>;
+        }
+
+        <span style="color:#008000;font-weight:bold">const</span> <span style="color:#b00040">char</span> <span style="color:#666">*</span>end <span style="color:#666">=</span> std<span style="color:#666">::</span>find(inbuf, inbuf <span style="color:#666">+</span> bytes_read, split_null <span style="color:#666">?</span> <span style="color:#ba2121">L</span><span style="color:#ba2121">&#39;\0&#39;</span> <span style="color:#666">:</span> <span style="color:#ba2121">L</span><span style="color:#ba2121">&#39;\n&#39;</span>);
+        <span style="color:#b00040">long</span> bytes_consumed <span style="color:#666">=</span> end <span style="color:#666">-</span> inbuf;  <span style="color:#408080;font-style:italic">// must be signed for use in lseek
+</span><span style="color:#408080;font-style:italic"></span>        assert(bytes_consumed <span style="color:#666">&lt;=</span> bytes_read);
+        str.append(inbuf, bytes_consumed);
+        <span style="color:#008000;font-weight:bold">if</span> (bytes_consumed <span style="color:#666">&lt;</span> bytes_read) {
+            <span style="color:#408080;font-style:italic">// We found a splitter. The +1 because we need to treat the splitter as consumed, but
+</span><span style="color:#408080;font-style:italic"></span>            <span style="color:#408080;font-style:italic">// not append it to the string.
+</span><span style="color:#408080;font-style:italic"></span>            CHECK(lseek(fd, bytes_consumed <span style="color:#666">-</span> bytes_read <span style="color:#666">+</span> <span style="color:#666">1</span>, SEEK_CUR) <span style="color:#666">!=</span> <span style="color:#666">-</span><span style="color:#666">1</span>, STATUS_CMD_ERROR)
+            finished <span style="color:#666">=</span> <span style="color:#008000">true</span>;
+        } <span style="color:#008000;font-weight:bold">else</span> <span style="color:#008000;font-weight:bold">if</span> (str.size() <span style="color:#666">&gt;</span> read_byte_limit) {
+            exit_res <span style="color:#666">=</span> STATUS_READ_TOO_MUCH;
+            finished <span style="color:#666">=</span> <span style="color:#008000">true</span>;
+        }
+    }
+
+    buff <span style="color:#666">=</span> str2wcstring(str);
+    <span style="color:#008000;font-weight:bold">if</span> (buff.empty() <span style="color:#666">&amp;&amp;</span> eof) {
+        exit_res <span style="color:#666">=</span> STATUS_CMD_ERROR;
+    }
+
+    <span style="color:#008000;font-weight:bold">return</span> exit_res;
+}
+
+<span style="color:#008000;font-weight:bold">static</span> <span style="color:#b00040">int</span> <span style="color:#00f">read_one_char_at_a_time</span>(<span style="color:#b00040">int</span> fd, wcstring <span style="color:#666">&amp;</span>buff, <span style="color:#b00040">int</span> nchars, <span style="color:#b00040">bool</span> split_null) {
+    <span style="color:#b00040">int</span> exit_res <span style="color:#666">=</span> STATUS_CMD_OK;
+    <span style="color:#b00040">bool</span> eof <span style="color:#666">=</span> <span style="color:#008000">false</span>;
+    size_t nbytes <span style="color:#666">=</span> <span style="color:#666">0</span>;
+
+    <span style="color:#008000;font-weight:bold">while</span> (<span style="color:#008000">true</span>) {
+        <span style="color:#b00040">bool</span> finished <span style="color:#666">=</span> <span style="color:#008000">false</span>;
+        wchar_t res <span style="color:#666">=</span> <span style="color:#666">0</span>;
+        mbstate_t state <span style="color:#666">=</span> {};
+
+        <span style="color:#008000;font-weight:bold">while</span> (<span style="color:#666">!</span>finished) {
+            <span style="color:#b00040">char</span> b;
+            <span style="color:#008000;font-weight:bold">if</span> (read_blocked(fd, <span style="color:#666">&amp;</span>b, <span style="color:#666">1</span>) <span style="color:#666">&lt;=</span> <span style="color:#666">0</span>) {
+                eof <span style="color:#666">=</span> <span style="color:#008000">true</span>;
+                <span style="color:#008000;font-weight:bold">break</span>;
+            }
+
+            nbytes<span style="color:#666">++</span>;
+            <span style="color:#008000;font-weight:bold">if</span> (MB_CUR_MAX <span style="color:#666">==</span> <span style="color:#666">1</span>) {
+                res <span style="color:#666">=</span> (<span style="color:#b00040">unsigned</span> <span style="color:#b00040">char</span>)b;
+                finished <span style="color:#666">=</span> <span style="color:#008000">true</span>;
+            } <span style="color:#008000;font-weight:bold">else</span> {
+                size_t sz <span style="color:#666">=</span> mbrtowc(<span style="color:#666">&amp;</span>res, <span style="color:#666">&amp;</span>b, <span style="color:#666">1</span>, <span style="color:#666">&amp;</span>state);
+                <span style="color:#008000;font-weight:bold">if</span> (sz <span style="color:#666">==</span> (size_t)<span style="color:#666">-</span><span style="color:#666">1</span>) {
+                    memset(<span style="color:#666">&amp;</span>state, <span style="color:#666">0</span>, <span style="color:#008000;font-weight:bold">sizeof</span>(state));
+                } <span style="color:#008000;font-weight:bold">else</span> <span style="color:#008000;font-weight:bold">if</span> (sz <span style="color:#666">!=</span> (size_t)<span style="color:#666">-</span><span style="color:#666">2</span>) {
+                    finished <span style="color:#666">=</span> <span style="color:#008000">true</span>;
+                }
+            }
+        }
+
+        <span style="color:#008000;font-weight:bold">if</span> (nbytes <span style="color:#666">&gt;</span> read_byte_limit) {
+            exit_res <span style="color:#666">=</span> STATUS_READ_TOO_MUCH;
+            <span style="color:#008000;font-weight:bold">break</span>;
+        }
+        <span style="color:#008000;font-weight:bold">if</span> (eof) <span style="color:#008000;font-weight:bold">break</span>;
+        <span style="color:#008000;font-weight:bold">if</span> (<span style="color:#666">!</span>split_null <span style="color:#666">&amp;&amp;</span> res <span style="color:#666">==</span> <span style="color:#ba2121">L</span><span style="color:#ba2121">&#39;\n&#39;</span>) <span style="color:#008000;font-weight:bold">break</span>;
+        <span style="color:#008000;font-weight:bold">if</span> (split_null <span style="color:#666">&amp;&amp;</span> res <span style="color:#666">==</span> <span style="color:#ba2121">L</span><span style="color:#ba2121">&#39;\0&#39;</span>) <span style="color:#008000;font-weight:bold">break</span>;
+
+        buff.push_back(res);
+        <span style="color:#008000;font-weight:bold">if</span> (nchars <span style="color:#666">&gt;</span> <span style="color:#666">0</span> <span style="color:#666">&amp;&amp;</span> (size_t)nchars <span style="color:#666">&lt;=</span> buff.size()) {
+            <span style="color:#008000;font-weight:bold">break</span>;
+        }
+    }
+
+    <span style="color:#008000;font-weight:bold">if</span> (buff.empty() <span style="color:#666">&amp;&amp;</span> eof) {
+        exit_res <span style="color:#666">=</span> STATUS_CMD_ERROR;
+    }
+
+    <span style="color:#008000;font-weight:bold">return</span> exit_res;
+}
+</code></pre></div>
+<p>デリミタを超えて読み込んでしまっても<code>lseek</code>を呼び出して読み込みオフセットをデリミタまで戻せばよい。</p>
+</p>
+</div>
+
+
+  <p>Written on Jan 29, 2019.</p>
+
+
+<footer>
+	<p>&copy; 2019 All rights reserved.</p>
+</footer>
+</body>
+</html>
