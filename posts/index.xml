@@ -113,7 +113,6 @@ ttyやpipeのようなシークできないファイルディスクリプタに�
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;87
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;88
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;89
-&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;90
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
 &lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#00f&#34;&gt;read_in_chunks&lt;/span&gt;(&lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; fd, wcstring &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;buff, &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; split_null) {
