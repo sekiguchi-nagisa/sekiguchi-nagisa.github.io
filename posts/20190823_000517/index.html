@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>_exitを呼び出すとカバレッジが取れない</title>
+	
+	<meta name="description" content="">
+	<meta name="image" content="">
+	
+	<meta itemprop="name" content="_exitを呼び出すとカバレッジが取れない">
+	<meta itemprop="description" content="">
+	<meta itemprop="image" content="">
+	
+	<meta name="og:title" content="_exitを呼び出すとカバレッジが取れない">
+	<meta name="og:description" content="">
+	
+	<meta name="og:url" content="https://sekiguchi-nagisa.github.io/posts/20190823_000517/">
+	<meta name="og:site_name" content="_exitを呼び出すとカバレッジが取れない">
+	<meta name="og:type" content="article">
+	
+	<meta name="article:tag" content="c c&#43;&#43; gcov ">
+	<link rel="stylesheet" type="text/css" href="https://sekiguchi-nagisa.github.io/css/style.css">
+	
+	
+</head>
+
+<body>
+
+<header>
+	
+	<a href="https://sekiguchi-nagisa.github.io/" style="float: left;color:#ff3b30;">開発とかの備忘録</a>
+	
+	&nbsp;&nbsp;<a href="https://sekiguchi-nagisa.github.io/archives/" style="color:#777;">Archives</a>&nbsp;&nbsp;<a href="https://sekiguchi-nagisa.github.io/about/" style="color:#777;">About</a>
+	
+	<a href="https://sekiguchi-nagisa.github.io/posts/index.xml" style="color:#777;float: right;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+</header>
+
+
+<div class="content">
+  <h1>_exitを呼び出すとカバレッジが取れない</h1>
+  <aside><a href="/tags/c/">c</a></a>&nbsp;&nbsp;&nbsp;<a href="/tags/c&#43;&#43;/">c&#43;&#43;</a></a>&nbsp;&nbsp;&nbsp;<a href="/tags/gcov/">gcov</a></a>&nbsp;&nbsp;&nbsp;</aside>
+  <p><p>gccにおいてカバレッジを有効にしたプログラム中で<code>_exit</code>を呼び出すとカバレッジ情報が出力されない。
+<code>exit</code>を呼び出す場合は正常にカバレッジ情報が出力される。</p>
+
+<p>カバレッジ（gcov）を有効にしたプログラムでは終了時に<code>__gcov_flush</code>を呼び出してカバレッジ情報を書き出している（古いgccだと<code>atexit</code>を利用、<a href="https://patchwork.ozlabs.org/patch/657661/">最新のgcc</a>ではデストラクタを利用）。
+<code>_exit</code>を呼ぶと終了処理をスキップして即座にプログラムを終了するため、<code>__gcov_flush</code>が呼ばれずカバレッジ情報が出力されない。しがって手動で<code>__gcov_flush</code>を呼び出す必要がある。</p>
+<div class="highlight"><div style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">__gcov_flush(); <span style="color:#408080;font-style:italic">// before call _exit
+</span><span style="color:#408080;font-style:italic"></span>_exit(<span style="color:#666">0</span>);
+</code></pre></td></tr></table>
+</div>
+</div></p>
+</div>
+
+
+  <p>Written on Aug 23, 2019.</p>
+
+
+<footer>
+	<p>&copy; 2019 All rights reserved.</p>
+</footer>
+</body>
+</html>
