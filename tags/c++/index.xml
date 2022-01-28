@@ -18,16 +18,15 @@
       <guid>https://sekiguchi-nagisa.github.io/posts/20190823_000517/</guid>
       <description>&lt;p&gt;gccにおいてカバレッジを有効にしたプログラム中で&lt;code&gt;_exit&lt;/code&gt;を呼び出すとカバレッジ情報が出力されない。
 &lt;code&gt;exit&lt;/code&gt;を呼び出す場合は正常にカバレッジ情報が出力される。&lt;/p&gt;
-
 &lt;p&gt;カバレッジ（gcov）を有効にしたプログラムでは終了時に&lt;code&gt;__gcov_flush&lt;/code&gt;を呼び出してカバレッジ情報を書き出している（古いgccだと&lt;code&gt;atexit&lt;/code&gt;を利用、&lt;a href=&#34;https://patchwork.ozlabs.org/patch/657661/&#34;&gt;最新のgcc&lt;/a&gt;ではデストラクタを利用）。
 &lt;code&gt;_exit&lt;/code&gt;を呼ぶと終了処理をスキップして即座にプログラムを終了するため、&lt;code&gt;__gcov_flush&lt;/code&gt;が呼ばれずカバレッジ情報が出力されない。したがって手動で&lt;code&gt;__gcov_flush&lt;/code&gt;を呼び出す必要がある。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;
 &lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;__gcov_flush(); &lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;// before call _exit
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;__gcov_flush(); &lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;// before call _exit
 &lt;/span&gt;&lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;&lt;/span&gt;_exit(&lt;span style=&#34;color:#666&#34;&gt;0&lt;/span&gt;);
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;

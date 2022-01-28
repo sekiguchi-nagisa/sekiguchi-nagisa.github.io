@@ -18,16 +18,15 @@
       <guid>https://sekiguchi-nagisa.github.io/posts/20190823_000517/</guid>
       <description>&lt;p&gt;gccにおいてカバレッジを有効にしたプログラム中で&lt;code&gt;_exit&lt;/code&gt;を呼び出すとカバレッジ情報が出力されない。
 &lt;code&gt;exit&lt;/code&gt;を呼び出す場合は正常にカバレッジ情報が出力される。&lt;/p&gt;
-
 &lt;p&gt;カバレッジ（gcov）を有効にしたプログラムでは終了時に&lt;code&gt;__gcov_flush&lt;/code&gt;を呼び出してカバレッジ情報を書き出している（古いgccだと&lt;code&gt;atexit&lt;/code&gt;を利用、&lt;a href=&#34;https://patchwork.ozlabs.org/patch/657661/&#34;&gt;最新のgcc&lt;/a&gt;ではデストラクタを利用）。
 &lt;code&gt;_exit&lt;/code&gt;を呼ぶと終了処理をスキップして即座にプログラムを終了するため、&lt;code&gt;__gcov_flush&lt;/code&gt;が呼ばれずカバレッジ情報が出力されない。したがって手動で&lt;code&gt;__gcov_flush&lt;/code&gt;を呼び出す必要がある。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;
 &lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;__gcov_flush(); &lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;// before call _exit
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;__gcov_flush(); &lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;// before call _exit
 &lt;/span&gt;&lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;&lt;/span&gt;_exit(&lt;span style=&#34;color:#666&#34;&gt;0&lt;/span&gt;);
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
@@ -41,13 +40,12 @@
       
       <guid>https://sekiguchi-nagisa.github.io/posts/20190129_221536/</guid>
       <description>&lt;p&gt;シェルのreadコマンドは指定したデリミタ（デフォルトは改行）が来るまで文字列を読むので、単純な&lt;a href=&#34;https://github.com/mirror/busybox/blob/master/shell/shell_common.c&#34;&gt;実装&lt;/a&gt;では1byteずつ読む。&lt;/p&gt;
-
 &lt;p&gt;一方、&lt;a href=&#34;https://github.com/fish-shell/fish-shell/blob/master/src/builtin_read.cpp&#34;&gt;fish&lt;/a&gt;では読み込み対象のファイルディスクリプタの特性によって異なり、
 ttyやpipeのようなシークできないファイルディスクリプタに対しては1byteずつ、
 シークできるものに対しては&lt;code&gt;READ_CHUNK_SIZE&lt;/code&gt;ずつ読み込んでいる。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;
 &lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
@@ -137,8 +135,8 @@ ttyやpipeのようなシークできないファイルディスクリプタに�
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;88
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;89
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#00f&#34;&gt;read_in_chunks&lt;/span&gt;(&lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; fd, wcstring &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;buff, &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; split_null) {
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#00f&#34;&gt;read_in_chunks&lt;/span&gt;(&lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; fd, wcstring &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;buff, &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; split_null) {
     &lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; exit_res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; STATUS_CMD_OK;
     std&lt;span style=&#34;color:#666&#34;&gt;::&lt;/span&gt;string str;
     &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; eof &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;false&lt;/span&gt;;
@@ -183,7 +181,7 @@ ttyやpipeのようなシークできないファイルディスクリプタに�
 
     &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;while&lt;/span&gt; (&lt;span style=&#34;color:#008000&#34;&gt;true&lt;/span&gt;) {
         &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; finished &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;false&lt;/span&gt;;
-        wchar_t res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;0&lt;/span&gt;;
+        &lt;span style=&#34;color:#b00040&#34;&gt;wchar_t&lt;/span&gt; res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;0&lt;/span&gt;;
         mbstate_t state &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; {};
 
         &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;while&lt;/span&gt; (&lt;span style=&#34;color:#666&#34;&gt;!&lt;/span&gt;finished) {
@@ -229,8 +227,7 @@ ttyやpipeのようなシークできないファイルディスクリプタに�
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;デリミタを超えて読み込んでしまっても&lt;code&gt;lseek&lt;/code&gt;を呼び出して読み込みオフセットをデリミタまで戻せばよい。&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;デリミタを超えて読み込んでしまっても&lt;code&gt;lseek&lt;/code&gt;を呼び出して読み込みオフセットをデリミタまで戻せばよい。&lt;/p&gt;
 </description>
     </item>
     
@@ -244,7 +241,7 @@ ttyやpipeのようなシークできないファイルディスクリプタに�
 FreeBSDの実装(&lt;a href=&#34;https://github.com/freebsd/freebsd/blob/master/lib/libc/gen/termios.c&#34;&gt;freebsd/termios.c&lt;/a&gt;)を見ると&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;
 &lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
@@ -257,8 +254,8 @@ FreeBSDの実装(&lt;a href=&#34;https://github.com/freebsd/freebsd/blob/master/
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b00040&#34;&gt;void&lt;/span&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b00040&#34;&gt;void&lt;/span&gt;
 &lt;span style=&#34;color:#00f&#34;&gt;cfmakesane&lt;/span&gt;(&lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;struct&lt;/span&gt; termios &lt;span style=&#34;color:#666&#34;&gt;*&lt;/span&gt;t)
 {
 
@@ -269,14 +266,14 @@ FreeBSDの実装(&lt;a href=&#34;https://github.com/freebsd/freebsd/blob/master/
 	t&lt;span style=&#34;color:#666&#34;&gt;-&amp;gt;&lt;/span&gt;c_ispeed &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; TTYDEF_SPEED;
 	t&lt;span style=&#34;color:#666&#34;&gt;-&amp;gt;&lt;/span&gt;c_ospeed &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; TTYDEF_SPEED;
 	memcpy(&lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;t&lt;span style=&#34;color:#666&#34;&gt;-&amp;gt;&lt;/span&gt;c_cc, ttydefchars, &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;sizeof&lt;/span&gt; ttydefchars);
-}&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;&lt;code&gt;ttydefchars&lt;/code&gt;を使って端末特殊文字を初期化しているようだ。
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;ttydefchars&lt;/code&gt;を使って端末特殊文字を初期化しているようだ。
 この変数はLinux/glibcだと&lt;code&gt;sys/ttydefaults.h&lt;/code&gt;に&lt;a href=&#34;https://github.com/lattera/glibc/blob/master/sysdeps/unix/sysv/linux/sys/ttydefaults.h&#34;&gt;次のように&lt;/a&gt;定義されている。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;
 &lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
@@ -284,21 +281,21 @@ FreeBSDの実装(&lt;a href=&#34;https://github.com/freebsd/freebsd/blob/master/
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#bc7a00&#34;&gt;#ifdef TTYDEFCHARS
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#bc7a00&#34;&gt;#ifdef TTYDEFCHARS
 &lt;/span&gt;&lt;span style=&#34;color:#bc7a00&#34;&gt;&lt;/span&gt;cc_t	ttydefchars[NCCS] &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; {
 	CEOF,	CEOL,	CEOL,	CERASE, CWERASE, CKILL, CREPRINT,
 	_POSIX_VDISABLE, CINTR,	CQUIT,	CSUSP,	CDSUSP,	CSTART,	CSTOP,	CLNEXT,
 	CDISCARD, CMIN,	CTIME,  CSTATUS, _POSIX_VDISABLE
 };
-&lt;span style=&#34;color:#bc7a00&#34;&gt;#undef TTYDEFCHARS&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;span style=&#34;color:#bc7a00&#34;&gt;#undef TTYDEFCHARS
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;ところが、何も考えずにこれを利用しても正しく動作しない。（Ctrl-Cが効かない。。）
+&lt;/div&gt;&lt;p&gt;ところが、何も考えずにこれを利用しても正しく動作しない。（Ctrl-Cが効かない。。）
 &lt;code&gt;VINTR&lt;/code&gt;などのマクロで特殊文字の値を設定するのだが(&lt;a href=&#34;https://linuxjm.osdn.jp/html/LDP_man-pages/man3/termios.3.html&#34;&gt;man&lt;/a&gt;)、&lt;code&gt;ttydefchars&lt;/code&gt;で設定している初期値と&lt;a href=&#34;https://github.com/lattera/glibc/blob/master/termios/termios.h&#34;&gt;termios.h&lt;/a&gt;で定義されている&lt;code&gt;V*&lt;/code&gt;マクロが明らかに対応していない。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;
 &lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
@@ -317,8 +314,8 @@ FreeBSDの実装(&lt;a href=&#34;https://github.com/freebsd/freebsd/blob/master/
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;/* c_cc characters */&lt;/span&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;/* c_cc characters */&lt;/span&gt;
 &lt;span style=&#34;color:#bc7a00&#34;&gt;#define VINTR 0
 &lt;/span&gt;&lt;span style=&#34;color:#bc7a00&#34;&gt;#define VQUIT 1
 &lt;/span&gt;&lt;span style=&#34;color:#bc7a00&#34;&gt;#define VERASE 2
@@ -335,16 +332,15 @@ FreeBSDの実装(&lt;a href=&#34;https://github.com/freebsd/freebsd/blob/master/
 &lt;/span&gt;&lt;span style=&#34;color:#bc7a00&#34;&gt;#define VDISCARD 13
 &lt;/span&gt;&lt;span style=&#34;color:#bc7a00&#34;&gt;#define VWERASE 14
 &lt;/span&gt;&lt;span style=&#34;color:#bc7a00&#34;&gt;#define VLNEXT 15
-&lt;/span&gt;&lt;span style=&#34;color:#bc7a00&#34;&gt;#define VEOL2 16&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bc7a00&#34;&gt;#define VEOL2 16
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;&lt;code&gt;ttydefchars&lt;/code&gt;を使うと、&lt;code&gt;VINTR&lt;/code&gt;の特殊文字の初期値が&lt;code&gt;CEOF&lt;/code&gt;に設定されてしまい、
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;ttydefchars&lt;/code&gt;を使うと、&lt;code&gt;VINTR&lt;/code&gt;の特殊文字の初期値が&lt;code&gt;CEOF&lt;/code&gt;に設定されてしまい、
 本来設定されるべき&lt;code&gt;CINTR&lt;/code&gt;にならない。&lt;/p&gt;
-
 &lt;p&gt;ちなみに、Android NDKの&lt;code&gt;ttydefchars&lt;/code&gt;は&lt;a href=&#34;https://android.googlesource.com/platform/development/+/73a5a3b/ndk/platforms/android-20/include/sys/ttydefaults.h&#34;&gt;次のように&lt;/a&gt;なっていて、正しく初期値が設定されそうだ。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;
 &lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
@@ -367,8 +363,8 @@ FreeBSDの実装(&lt;a href=&#34;https://github.com/freebsd/freebsd/blob/master/
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;const&lt;/span&gt; cc_t ttydefchars[NCCS] &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; {
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;const&lt;/span&gt; cc_t ttydefchars[NCCS] &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; {
 	[VEOF] &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; CEOF,
 	[VEOL] &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; CEOL,
 	[VEOL2] &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; CEOL,
@@ -389,7 +385,8 @@ FreeBSDの実装(&lt;a href=&#34;https://github.com/freebsd/freebsd/blob/master/
 	[VTIME] &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; CTIME,
 	[VSTATUS] &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; CSTATUS,
 	[&lt;span style=&#34;color:#666&#34;&gt;19&lt;/span&gt;] &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; _POSIX_VDISABLE,	&lt;span style=&#34;color:#408080;font-style:italic&#34;&gt;/* spare */&lt;/span&gt;
-};&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;</description>
     </item>

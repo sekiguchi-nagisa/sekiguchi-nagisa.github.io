@@ -17,13 +17,12 @@
       
       <guid>https://sekiguchi-nagisa.github.io/posts/20190129_221536/</guid>
       <description>&lt;p&gt;シェルのreadコマンドは指定したデリミタ（デフォルトは改行）が来るまで文字列を読むので、単純な&lt;a href=&#34;https://github.com/mirror/busybox/blob/master/shell/shell_common.c&#34;&gt;実装&lt;/a&gt;では1byteずつ読む。&lt;/p&gt;
-
 &lt;p&gt;一方、&lt;a href=&#34;https://github.com/fish-shell/fish-shell/blob/master/src/builtin_read.cpp&#34;&gt;fish&lt;/a&gt;では読み込み対象のファイルディスクリプタの特性によって異なり、
 ttyやpipeのようなシークできないファイルディスクリプタに対しては1byteずつ、
 シークできるものに対しては&lt;code&gt;READ_CHUNK_SIZE&lt;/code&gt;ずつ読み込んでいる。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;
 &lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
@@ -113,8 +112,8 @@ ttyやpipeのようなシークできないファイルディスクリプタに�
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;88
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;89
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#00f&#34;&gt;read_in_chunks&lt;/span&gt;(&lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; fd, wcstring &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;buff, &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; split_null) {
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#00f&#34;&gt;read_in_chunks&lt;/span&gt;(&lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; fd, wcstring &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;buff, &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; split_null) {
     &lt;span style=&#34;color:#b00040&#34;&gt;int&lt;/span&gt; exit_res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; STATUS_CMD_OK;
     std&lt;span style=&#34;color:#666&#34;&gt;::&lt;/span&gt;string str;
     &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; eof &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;false&lt;/span&gt;;
@@ -159,7 +158,7 @@ ttyやpipeのようなシークできないファイルディスクリプタに�
 
     &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;while&lt;/span&gt; (&lt;span style=&#34;color:#008000&#34;&gt;true&lt;/span&gt;) {
         &lt;span style=&#34;color:#b00040&#34;&gt;bool&lt;/span&gt; finished &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#008000&#34;&gt;false&lt;/span&gt;;
-        wchar_t res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;0&lt;/span&gt;;
+        &lt;span style=&#34;color:#b00040&#34;&gt;wchar_t&lt;/span&gt; res &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;0&lt;/span&gt;;
         mbstate_t state &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; {};
 
         &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;while&lt;/span&gt; (&lt;span style=&#34;color:#666&#34;&gt;!&lt;/span&gt;finished) {
@@ -205,8 +204,7 @@ ttyやpipeのようなシークできないファイルディスクリプタに�
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;デリミタを超えて読み込んでしまっても&lt;code&gt;lseek&lt;/code&gt;を呼び出して読み込みオフセットをデリミタまで戻せばよい。&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;デリミタを超えて読み込んでしまっても&lt;code&gt;lseek&lt;/code&gt;を呼び出して読み込みオフセットをデリミタまで戻せばよい。&lt;/p&gt;
 </description>
     </item>
     

@@ -40,15 +40,14 @@
 
 <div class="content">
   <h1>fishのreadコマンド実装</h1>
-  <aside><a href="/tags/shell/">shell</a></a>&nbsp;&nbsp;&nbsp;</aside>
+  <aside><a href="/tags/shell/">shell</a>&nbsp;&nbsp;&nbsp;</aside>
   <p><p>シェルのreadコマンドは指定したデリミタ（デフォルトは改行）が来るまで文字列を読むので、単純な<a href="https://github.com/mirror/busybox/blob/master/shell/shell_common.c">実装</a>では1byteずつ読む。</p>
-
 <p>一方、<a href="https://github.com/fish-shell/fish-shell/blob/master/src/builtin_read.cpp">fish</a>では読み込み対象のファイルディスクリプタの特性によって異なり、
 ttyやpipeのようなシークできないファイルディスクリプタに対しては1byteずつ、
 シークできるものに対しては<code>READ_CHUNK_SIZE</code>ずつ読み込んでいる。</p>
 <div class="highlight"><div style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
@@ -138,8 +137,8 @@ ttyやpipeのようなシークできないファイルディスクリプタに�
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">88
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">89
 </span></code></pre></td>
-<td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#008000;font-weight:bold">static</span> <span style="color:#b00040">int</span> <span style="color:#00f">read_in_chunks</span>(<span style="color:#b00040">int</span> fd, wcstring <span style="color:#666">&amp;</span>buff, <span style="color:#b00040">bool</span> split_null) {
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#008000;font-weight:bold">static</span> <span style="color:#b00040">int</span> <span style="color:#00f">read_in_chunks</span>(<span style="color:#b00040">int</span> fd, wcstring <span style="color:#666">&amp;</span>buff, <span style="color:#b00040">bool</span> split_null) {
     <span style="color:#b00040">int</span> exit_res <span style="color:#666">=</span> STATUS_CMD_OK;
     std<span style="color:#666">::</span>string str;
     <span style="color:#b00040">bool</span> eof <span style="color:#666">=</span> <span style="color:#008000">false</span>;
@@ -184,7 +183,7 @@ ttyやpipeのようなシークできないファイルディスクリプタに�
 
     <span style="color:#008000;font-weight:bold">while</span> (<span style="color:#008000">true</span>) {
         <span style="color:#b00040">bool</span> finished <span style="color:#666">=</span> <span style="color:#008000">false</span>;
-        wchar_t res <span style="color:#666">=</span> <span style="color:#666">0</span>;
+        <span style="color:#b00040">wchar_t</span> res <span style="color:#666">=</span> <span style="color:#666">0</span>;
         mbstate_t state <span style="color:#666">=</span> {};
 
         <span style="color:#008000;font-weight:bold">while</span> (<span style="color:#666">!</span>finished) {
@@ -230,8 +229,7 @@ ttyやpipeのようなシークできないファイルディスクリプタに�
 }
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>デリミタを超えて読み込んでしまっても<code>lseek</code>を呼び出して読み込みオフセットをデリミタまで戻せばよい。</p>
+</div><p>デリミタを超えて読み込んでしまっても<code>lseek</code>を呼び出して読み込みオフセットをデリミタまで戻せばよい。</p>
 </p>
 </div>
 
@@ -240,7 +238,7 @@ ttyやpipeのようなシークできないファイルディスクリプタに�
 
 
 <footer>
-	<p>&copy; 2019 All rights reserved.</p>
+	<p>&copy; 2022 All rights reserved.</p>
 </footer>
 </body>
 </html>
