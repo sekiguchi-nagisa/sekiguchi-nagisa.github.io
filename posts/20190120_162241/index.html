@@ -43,154 +43,154 @@
   <aside><a href="/tags/tty/">tty</a>&nbsp;&nbsp;&nbsp;<a href="/tags/linux/">linux</a>&nbsp;&nbsp;&nbsp;</aside>
   <p><p>Linuxでttyを初期化する方法（<code>stty sane</code>に相当）を調べていて、FreeBSDだと<code>cfmakesane</code>という関数があることがわかった。Linux/glibcだとこれがないので同等の関数を実装しようと思い、
 FreeBSDの実装(<a href="https://github.com/freebsd/freebsd/blob/master/lib/libc/gen/termios.c">freebsd/termios.c</a>)を見ると</p>
-<div class="highlight"><div style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4">
-<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+<div class="highlight"><div style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#b00040">void</span>
-<span style="color:#00f">cfmakesane</span>(<span style="color:#008000;font-weight:bold">struct</span> termios <span style="color:#666">*</span>t)
-{
-
-	t<span style="color:#666">-&gt;</span>c_cflag <span style="color:#666">=</span> TTYDEF_CFLAG;
-	t<span style="color:#666">-&gt;</span>c_iflag <span style="color:#666">=</span> TTYDEF_IFLAG;
-	t<span style="color:#666">-&gt;</span>c_lflag <span style="color:#666">=</span> TTYDEF_LFLAG;
-	t<span style="color:#666">-&gt;</span>c_oflag <span style="color:#666">=</span> TTYDEF_OFLAG;
-	t<span style="color:#666">-&gt;</span>c_ispeed <span style="color:#666">=</span> TTYDEF_SPEED;
-	t<span style="color:#666">-&gt;</span>c_ospeed <span style="color:#666">=</span> TTYDEF_SPEED;
-	memcpy(<span style="color:#666">&amp;</span>t<span style="color:#666">-&gt;</span>c_cc, ttydefchars, <span style="color:#008000;font-weight:bold">sizeof</span> ttydefchars);
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#b00040">void</span>
+</span></span><span style="display:flex;"><span><span style="color:#00f">cfmakesane</span>(<span style="color:#008000;font-weight:bold">struct</span> termios <span style="color:#666">*</span>t)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	t<span style="color:#666">-&gt;</span>c_cflag <span style="color:#666">=</span> TTYDEF_CFLAG;
+</span></span><span style="display:flex;"><span>	t<span style="color:#666">-&gt;</span>c_iflag <span style="color:#666">=</span> TTYDEF_IFLAG;
+</span></span><span style="display:flex;"><span>	t<span style="color:#666">-&gt;</span>c_lflag <span style="color:#666">=</span> TTYDEF_LFLAG;
+</span></span><span style="display:flex;"><span>	t<span style="color:#666">-&gt;</span>c_oflag <span style="color:#666">=</span> TTYDEF_OFLAG;
+</span></span><span style="display:flex;"><span>	t<span style="color:#666">-&gt;</span>c_ispeed <span style="color:#666">=</span> TTYDEF_SPEED;
+</span></span><span style="display:flex;"><span>	t<span style="color:#666">-&gt;</span>c_ospeed <span style="color:#666">=</span> TTYDEF_SPEED;
+</span></span><span style="display:flex;"><span>	memcpy(<span style="color:#666">&amp;</span>t<span style="color:#666">-&gt;</span>c_cc, ttydefchars, <span style="color:#008000;font-weight:bold">sizeof</span> ttydefchars);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>ttydefchars</code>を使って端末特殊文字を初期化しているようだ。
 この変数はLinux/glibcだと<code>sys/ttydefaults.h</code>に<a href="https://github.com/lattera/glibc/blob/master/sysdeps/unix/sysv/linux/sys/ttydefaults.h">次のように</a>定義されている。</p>
-<div class="highlight"><div style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4">
-<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+<div class="highlight"><div style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#bc7a00">#ifdef TTYDEFCHARS
-</span><span style="color:#bc7a00"></span>cc_t	ttydefchars[NCCS] <span style="color:#666">=</span> {
-	CEOF,	CEOL,	CEOL,	CERASE, CWERASE, CKILL, CREPRINT,
-	_POSIX_VDISABLE, CINTR,	CQUIT,	CSUSP,	CDSUSP,	CSTART,	CSTOP,	CLNEXT,
-	CDISCARD, CMIN,	CTIME,  CSTATUS, _POSIX_VDISABLE
-};
-<span style="color:#bc7a00">#undef TTYDEFCHARS
-</span></code></pre></td></tr></table>
+<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#bc7a00">#ifdef TTYDEFCHARS
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00"></span>cc_t	ttydefchars[NCCS] <span style="color:#666">=</span> {
+</span></span><span style="display:flex;"><span>	CEOF,	CEOL,	CEOL,	CERASE, CWERASE, CKILL, CREPRINT,
+</span></span><span style="display:flex;"><span>	_POSIX_VDISABLE, CINTR,	CQUIT,	CSUSP,	CDSUSP,	CSTART,	CSTOP,	CLNEXT,
+</span></span><span style="display:flex;"><span>	CDISCARD, CMIN,	CTIME,  CSTATUS, _POSIX_VDISABLE
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#bc7a00">#undef TTYDEFCHARS
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>ところが、何も考えずにこれを利用しても正しく動作しない。（Ctrl-Cが効かない。。）
 <code>VINTR</code>などのマクロで特殊文字の値を設定するのだが(<a href="https://linuxjm.osdn.jp/html/LDP_man-pages/man3/termios.3.html">man</a>)、<code>ttydefchars</code>で設定している初期値と<a href="https://github.com/lattera/glibc/blob/master/termios/termios.h">termios.h</a>で定義されている<code>V*</code>マクロが明らかに対応していない。</p>
-<div class="highlight"><div style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4">
-<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+<div class="highlight"><div style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#408080;font-style:italic">/* c_cc characters */</span>
-<span style="color:#bc7a00">#define VINTR 0
-</span><span style="color:#bc7a00">#define VQUIT 1
-</span><span style="color:#bc7a00">#define VERASE 2
-</span><span style="color:#bc7a00">#define VKILL 3
-</span><span style="color:#bc7a00">#define VEOF 4
-</span><span style="color:#bc7a00">#define VTIME 5
-</span><span style="color:#bc7a00">#define VMIN 6
-</span><span style="color:#bc7a00">#define VSWTC 7
-</span><span style="color:#bc7a00">#define VSTART 8
-</span><span style="color:#bc7a00">#define VSTOP 9
-</span><span style="color:#bc7a00">#define VSUSP 10
-</span><span style="color:#bc7a00">#define VEOL 11
-</span><span style="color:#bc7a00">#define VREPRINT 12
-</span><span style="color:#bc7a00">#define VDISCARD 13
-</span><span style="color:#bc7a00">#define VWERASE 14
-</span><span style="color:#bc7a00">#define VLNEXT 15
-</span><span style="color:#bc7a00">#define VEOL2 16
-</span></code></pre></td></tr></table>
+<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/* c_cc characters */</span>
+</span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VINTR 0
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VQUIT 1
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VERASE 2
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VKILL 3
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VEOF 4
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VTIME 5
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VMIN 6
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VSWTC 7
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VSTART 8
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VSTOP 9
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VSUSP 10
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VEOL 11
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VREPRINT 12
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VDISCARD 13
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VWERASE 14
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VLNEXT 15
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00">#define VEOL2 16
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>ttydefchars</code>を使うと、<code>VINTR</code>の特殊文字の初期値が<code>CEOF</code>に設定されてしまい、
 本来設定されるべき<code>CINTR</code>にならない。</p>
 <p>ちなみに、Android NDKの<code>ttydefchars</code>は<a href="https://android.googlesource.com/platform/development/+/73a5a3b/ndk/platforms/android-20/include/sys/ttydefaults.h">次のように</a>なっていて、正しく初期値が設定されそうだ。</p>
-<div class="highlight"><div style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4">
-<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+<div class="highlight"><div style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#008000;font-weight:bold">const</span> cc_t ttydefchars[NCCS] <span style="color:#666">=</span> {
-	[VEOF] <span style="color:#666">=</span> CEOF,
-	[VEOL] <span style="color:#666">=</span> CEOL,
-	[VEOL2] <span style="color:#666">=</span> CEOL,
-	[VERASE] <span style="color:#666">=</span> CERASE,
-	[VWERASE] <span style="color:#666">=</span> CWERASE,
-	[VKILL] <span style="color:#666">=</span> CKILL,
-	[VREPRINT] <span style="color:#666">=</span> CREPRINT,
-	[<span style="color:#666">7</span>] <span style="color:#666">=</span> _POSIX_VDISABLE,	<span style="color:#408080;font-style:italic">/* spare */</span>
-	[VINTR] <span style="color:#666">=</span> CINTR,
-	[VQUIT] <span style="color:#666">=</span> CQUIT,
-	[VSUSP] <span style="color:#666">=</span> CSUSP,
-	[VDSUSP] <span style="color:#666">=</span> CDSUSP,
-	[VSTART] <span style="color:#666">=</span> CSTART,
-	[VSTOP] <span style="color:#666">=</span> CSTOP,
-	[VLNEXT] <span style="color:#666">=</span> CLNEXT,
-	[VDISCARD] <span style="color:#666">=</span> CDISCARD,
-	[VMIN] <span style="color:#666">=</span> CMIN,
-	[VTIME] <span style="color:#666">=</span> CTIME,
-	[VSTATUS] <span style="color:#666">=</span> CSTATUS,
-	[<span style="color:#666">19</span>] <span style="color:#666">=</span> _POSIX_VDISABLE,	<span style="color:#408080;font-style:italic">/* spare */</span>
-};
-</code></pre></td></tr></table>
+<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">const</span> cc_t ttydefchars[NCCS] <span style="color:#666">=</span> {
+</span></span><span style="display:flex;"><span>	[VEOF] <span style="color:#666">=</span> CEOF,
+</span></span><span style="display:flex;"><span>	[VEOL] <span style="color:#666">=</span> CEOL,
+</span></span><span style="display:flex;"><span>	[VEOL2] <span style="color:#666">=</span> CEOL,
+</span></span><span style="display:flex;"><span>	[VERASE] <span style="color:#666">=</span> CERASE,
+</span></span><span style="display:flex;"><span>	[VWERASE] <span style="color:#666">=</span> CWERASE,
+</span></span><span style="display:flex;"><span>	[VKILL] <span style="color:#666">=</span> CKILL,
+</span></span><span style="display:flex;"><span>	[VREPRINT] <span style="color:#666">=</span> CREPRINT,
+</span></span><span style="display:flex;"><span>	[<span style="color:#666">7</span>] <span style="color:#666">=</span> _POSIX_VDISABLE,	<span style="color:#408080;font-style:italic">/* spare */</span>
+</span></span><span style="display:flex;"><span>	[VINTR] <span style="color:#666">=</span> CINTR,
+</span></span><span style="display:flex;"><span>	[VQUIT] <span style="color:#666">=</span> CQUIT,
+</span></span><span style="display:flex;"><span>	[VSUSP] <span style="color:#666">=</span> CSUSP,
+</span></span><span style="display:flex;"><span>	[VDSUSP] <span style="color:#666">=</span> CDSUSP,
+</span></span><span style="display:flex;"><span>	[VSTART] <span style="color:#666">=</span> CSTART,
+</span></span><span style="display:flex;"><span>	[VSTOP] <span style="color:#666">=</span> CSTOP,
+</span></span><span style="display:flex;"><span>	[VLNEXT] <span style="color:#666">=</span> CLNEXT,
+</span></span><span style="display:flex;"><span>	[VDISCARD] <span style="color:#666">=</span> CDISCARD,
+</span></span><span style="display:flex;"><span>	[VMIN] <span style="color:#666">=</span> CMIN,
+</span></span><span style="display:flex;"><span>	[VTIME] <span style="color:#666">=</span> CTIME,
+</span></span><span style="display:flex;"><span>	[VSTATUS] <span style="color:#666">=</span> CSTATUS,
+</span></span><span style="display:flex;"><span>	[<span style="color:#666">19</span>] <span style="color:#666">=</span> _POSIX_VDISABLE,	<span style="color:#408080;font-style:italic">/* spare */</span>
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></td></tr></table>
 </div>
 </div></p>
 </div>

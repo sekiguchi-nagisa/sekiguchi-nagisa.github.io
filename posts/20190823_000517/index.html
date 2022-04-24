@@ -45,15 +45,15 @@
 <code>exit</code>を呼び出す場合は正常にカバレッジ情報が出力される。</p>
 <p>カバレッジ（gcov）を有効にしたプログラムでは終了時に<code>__gcov_flush</code>を呼び出してカバレッジ情報を書き出している（古いgccだと<code>atexit</code>を利用、<a href="https://patchwork.ozlabs.org/patch/657661/">最新のgcc</a>ではデストラクタを利用）。
 <code>_exit</code>を呼ぶと終了処理をスキップして即座にプログラムを終了するため、<code>__gcov_flush</code>が呼ばれずカバレッジ情報が出力されない。したがって手動で<code>__gcov_flush</code>を呼び出す必要がある。</p>
-<div class="highlight"><div style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4">
-<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+<div class="highlight"><div style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">__gcov_flush(); <span style="color:#408080;font-style:italic">// before call _exit
-</span><span style="color:#408080;font-style:italic"></span>_exit(<span style="color:#666">0</span>);
-</code></pre></td></tr></table>
+<pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>__gcov_flush(); <span style="color:#408080;font-style:italic">// before call _exit
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>_exit(<span style="color:#666">0</span>);
+</span></span></code></pre></td></tr></table>
 </div>
 </div></p>
 </div>
