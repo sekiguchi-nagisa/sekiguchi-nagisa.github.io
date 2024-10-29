@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>開発用Linuxデスクトップ環境</title>
+	
+	<meta name="description" content="">
+	<meta name="image" content="">
+	
+	<meta itemprop="name" content="開発用Linuxデスクトップ環境">
+	<meta itemprop="description" content="">
+	<meta itemprop="image" content="">
+	
+	<meta name="og:title" content="開発用Linuxデスクトップ環境">
+	<meta name="og:description" content="">
+	
+	<meta name="og:url" content="https://sekiguchi-nagisa.github.io/posts/20241029_213808/">
+	<meta name="og:site_name" content="開発用Linuxデスクトップ環境">
+	<meta name="og:type" content="article">
+	
+	<meta name="article:tag" content="linux ">
+	<link rel="stylesheet" type="text/css" href="https://sekiguchi-nagisa.github.io/css/style.css">
+	
+	
+</head>
+
+<body>
+
+<header>
+	
+	<a href="https://sekiguchi-nagisa.github.io/" style="float: left;color:#ff3b30;">開発とかの備忘録</a>
+	
+	&nbsp;&nbsp;<a href="https://sekiguchi-nagisa.github.io/archives/" style="color:#777;">Archives</a>&nbsp;&nbsp;<a href="https://sekiguchi-nagisa.github.io/about/" style="color:#777;">About</a>
+	
+	<a href="https://sekiguchi-nagisa.github.io/posts/index.xml" style="color:#777;float: right;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+</header>
+
+
+<div class="content">
+  <h1>開発用Linuxデスクトップ環境</h1>
+  <aside><a href="/tags/linux/">linux</a>&nbsp;&nbsp;&nbsp;</aside>
+  <p><p>Linuxデスクトップ環境でマルチモニターを使ってモニタ毎にスケーリングを設定するためWaylandに移行する。
+openSUSE Tumbleweed + KDE6 Waylandを使う。</p>
+<h2 id="システム設定">システム設定</h2>
+<h3 id="キーボードime">キーボード/IME</h3>
+<p>キーボードはHHKB英字配列を利用する。dipスイッチSW2、SW5をONにして最下段のキーマップを<code>Left-Meta</code>, <code>Left-Alt</code>, <code>Space</code>, <code>Right-Alt</code>, <code>Right-Meta</code>にする。</p>
+<p>Fcitx5をインストールして、KDEシステム設定から「仮想キーボード/Fcitx5」を選択する。Fcitx5の設定で
+IMEオフを<code>Left-Alt</code>、IMEオンを<code>Right-Alt</code>にマッピングする。</p>
+<p>なおInteliJなどでは入力補完中に入力ウインドウが表示されないのでFcitx5の「アドオン/X Input Methodフロントエンド」から「XIMでOn The Spotスタイルを使う」を有効化する。</p>
+<p>参考</p>
+<ul>
+<li><a href="https://note.com/junf/n/n7644536ff2a7?magazine_key=m2587441b50a6">Ubuntu MATE で PyCharm の日本語インライン入力 </a></li>
+</ul>
+<h2 id="各種ソフトウェア">各種ソフトウェア</h2>
+<h3 id="brave">Brave</h3>
+<p>Waylandで起動するためにBraveの起動オプションに
+<code>--ozone-platform-hint=auto --enable-wayland-ime</code>
+を引数として渡す。</p>
+<p>なおBraveはFlatpakでユーザレベルインストールしている。
+Braveのデスクトップファイルは
+<code>~/.local/share/flatpak/exports/share/applications/com.brave.Browser.desktop</code>
+にあるのでファイルを編集し上記のオプションを追加する</p>
+<p>参考</p>
+<ul>
+<li><a href="https://wiki.archlinux.jp/index.php/Flatpak#Flatpak_.E3.81.AE_.desktop_.E3.83.95.E3.82.A1.E3.82.A4.E3.83.AB.E3.82.92.E3.83.A1.E3.83.8B.E3.83.A5.E3.83.BC.E3.81.AB.E8.BF.BD.E5.8A.A0">Flatpak の .desktop ファイルをメニューに追加</a></li>
+<li><a href="https://zenn.dev/compass/articles/e1f4c88e78b721">Wayland環境でChromiumベースのソフトをいい感じに使う</a></li>
+</ul>
+<h3 id="vscode">VSCode</h3>
+<p>AltキーでのIME切り替えとVSCodeのショートカット（メニューフォーカス）が競合するのでVSCodeのAltキーショートカットを無効にする。settings.jsonの以下の項目を設定する</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#ba2121">&#34;window.customMenuBarAltFocus&#34;</span><span style="">:</span> <span style="color:#008000;font-weight:bold">false</span><span style="">,</span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">&#34;window.enableMenuBarMnemonics&#34;</span><span style="">:</span> <span style="color:#008000;font-weight:bold">false</span><span style="">,</span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">&#34;window.titleBarStyle&#34;</span><span style="">:</span> <span style="color:#ba2121">&#34;custom&#34;</span>
+</span></span></code></pre></div><p>参考</p>
+<ul>
+<li><a href="https://qiita.com/Yana_023_/items/7db6d500942457861c36">vscodeでAltを使ってIME切り替えをするとメニューに飛んでしまう人向け</a></li>
+<li><a href="https://stackoverflow.com/questions/48044429/override-alt-to-toggle-menu-bar-on-vs-code">Override <!-- raw HTML omitted --> to toggle menu bar on VS CODE</a></li>
+</ul>
+<p>VSCodeもBraveと同様の引数を渡すことでWaylandで起動できる</p>
+<h3 id="jetbrains-ide">JetBrains IDE</h3>
+<p>Waylandのサポートは現在開発中。当面はXWaylandで起動する。fractionalスケーリングを設定しても問題なさそう。
+IME有効時に入力ウインドウが表示されない。</p>
+<h3 id="その他">その他</h3>
+<p>xlsclientsコマンドでどのアプリケーションがxwayland上で動作しているか確認できる</p>
+</p>
+</div>
+
+
+  <p>Written on Oct 29, 2024.</p>
+
+
+<footer>
+	<p>&copy; 2024 All rights reserved.</p>
+</footer>
+</body>
+</html>

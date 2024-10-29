@@ -2,6 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://sekiguchi-nagisa.github.io/tags/linux/</loc>
+    <lastmod>2024-10-29T21:38:08+09:00</lastmod>
+  </url><url>
+    <loc>https://sekiguchi-nagisa.github.io/posts/</loc>
+    <lastmod>2024-10-29T21:38:08+09:00</lastmod>
+  </url><url>
+    <loc>https://sekiguchi-nagisa.github.io/tags/</loc>
+    <lastmod>2024-10-29T21:38:08+09:00</lastmod>
+  </url><url>
+    <loc>https://sekiguchi-nagisa.github.io/</loc>
+    <lastmod>2024-10-29T21:38:08+09:00</lastmod>
+  </url><url>
+    <loc>https://sekiguchi-nagisa.github.io/posts/20241029_213808/</loc>
+    <lastmod>2024-10-29T21:38:08+09:00</lastmod>
+  </url><url>
     <loc>https://sekiguchi-nagisa.github.io/posts/20190823_000517/</loc>
     <lastmod>2019-08-23T00:05:17+09:00</lastmod>
   </url><url>
@@ -14,23 +29,11 @@
     <loc>https://sekiguchi-nagisa.github.io/tags/gcov/</loc>
     <lastmod>2019-08-23T00:05:17+09:00</lastmod>
   </url><url>
-    <loc>https://sekiguchi-nagisa.github.io/posts/</loc>
-    <lastmod>2019-08-23T00:05:17+09:00</lastmod>
-  </url><url>
-    <loc>https://sekiguchi-nagisa.github.io/tags/</loc>
-    <lastmod>2019-08-23T00:05:17+09:00</lastmod>
-  </url><url>
-    <loc>https://sekiguchi-nagisa.github.io/</loc>
-    <lastmod>2019-08-23T00:05:17+09:00</lastmod>
-  </url><url>
     <loc>https://sekiguchi-nagisa.github.io/posts/20190129_221536/</loc>
     <lastmod>2019-01-29T22:15:37+09:00</lastmod>
   </url><url>
     <loc>https://sekiguchi-nagisa.github.io/tags/shell/</loc>
     <lastmod>2019-01-29T22:15:37+09:00</lastmod>
-  </url><url>
-    <loc>https://sekiguchi-nagisa.github.io/tags/linux/</loc>
-    <lastmod>2019-01-20T16:22:41+09:00</lastmod>
   </url><url>
     <loc>https://sekiguchi-nagisa.github.io/posts/20190120_162241/</loc>
     <lastmod>2019-01-20T16:22:41+09:00</lastmod>
