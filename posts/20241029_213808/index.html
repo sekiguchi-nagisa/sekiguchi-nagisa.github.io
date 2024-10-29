@@ -61,14 +61,14 @@ IMEオフを<code>Left-Alt</code>、IMEオンを<code>Right-Alt</code>にマッ�
 <p>なおBraveはFlatpakでユーザレベルインストールしている。
 Braveのデスクトップファイルは
 <code>~/.local/share/flatpak/exports/share/applications/com.brave.Browser.desktop</code>
-にあるのでファイルを編集し上記のオプションを追加する</p>
+にあるのでファイルを編集し上記のオプションを追加する。</p>
 <p>参考</p>
 <ul>
 <li><a href="https://wiki.archlinux.jp/index.php/Flatpak#Flatpak_.E3.81.AE_.desktop_.E3.83.95.E3.82.A1.E3.82.A4.E3.83.AB.E3.82.92.E3.83.A1.E3.83.8B.E3.83.A5.E3.83.BC.E3.81.AB.E8.BF.BD.E5.8A.A0">Flatpak の .desktop ファイルをメニューに追加</a></li>
 <li><a href="https://zenn.dev/compass/articles/e1f4c88e78b721">Wayland環境でChromiumベースのソフトをいい感じに使う</a></li>
 </ul>
 <h3 id="vscode">VSCode</h3>
-<p>AltキーでのIME切り替えとVSCodeのショートカット（メニューフォーカス）が競合するのでVSCodeのAltキーショートカットを無効にする。settings.jsonの以下の項目を設定する</p>
+<p>AltキーでのIME切り替えとVSCodeのショートカット（メニューフォーカス）が競合するのでVSCodeのAltキーショートカットを無効にする。settings.jsonの以下の項目を設定する。</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#ba2121">&#34;window.customMenuBarAltFocus&#34;</span><span style="">:</span> <span style="color:#008000;font-weight:bold">false</span><span style="">,</span>
 </span></span><span style="display:flex;"><span><span style="color:#ba2121">&#34;window.enableMenuBarMnemonics&#34;</span><span style="">:</span> <span style="color:#008000;font-weight:bold">false</span><span style="">,</span>
 </span></span><span style="display:flex;"><span><span style="color:#ba2121">&#34;window.titleBarStyle&#34;</span><span style="">:</span> <span style="color:#ba2121">&#34;custom&#34;</span>
@@ -77,12 +77,12 @@ Braveのデスクトップファイルは
 <li><a href="https://qiita.com/Yana_023_/items/7db6d500942457861c36">vscodeでAltを使ってIME切り替えをするとメニューに飛んでしまう人向け</a></li>
 <li><a href="https://stackoverflow.com/questions/48044429/override-alt-to-toggle-menu-bar-on-vs-code">Override <!-- raw HTML omitted --> to toggle menu bar on VS CODE</a></li>
 </ul>
-<p>VSCodeもBraveと同様の引数を渡すことでWaylandで起動できる</p>
+<p>VSCodeもBraveと同様の引数を渡すことでWaylandで起動できる。</p>
 <h3 id="jetbrains-ide">JetBrains IDE</h3>
 <p>Waylandのサポートは現在開発中。当面はXWaylandで起動する。fractionalスケーリングを設定しても問題なさそう。
 IME有効時に入力ウインドウが表示されない。</p>
 <h3 id="その他">その他</h3>
-<p>xlsclientsコマンドでどのアプリケーションがxwayland上で動作しているか確認できる</p>
+<p>xlsclientsコマンドでどのアプリケーションがxwayland上で動作しているか確認できる。</p>
 </p>
 </div>
 

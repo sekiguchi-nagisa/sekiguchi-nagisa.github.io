@@ -36,14 +36,14 @@ IMEオフを&lt;code&gt;Left-Alt&lt;/code&gt;、IMEオンを&lt;code&gt;Right-Al
 &lt;p&gt;なおBraveはFlatpakでユーザレベルインストールしている。
 Braveのデスクトップファイルは
 &lt;code&gt;~/.local/share/flatpak/exports/share/applications/com.brave.Browser.desktop&lt;/code&gt;
-にあるのでファイルを編集し上記のオプションを追加する&lt;/p&gt;
+にあるのでファイルを編集し上記のオプションを追加する。&lt;/p&gt;
 &lt;p&gt;参考&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://wiki.archlinux.jp/index.php/Flatpak#Flatpak_.E3.81.AE_.desktop_.E3.83.95.E3.82.A1.E3.82.A4.E3.83.AB.E3.82.92.E3.83.A1.E3.83.8B.E3.83.A5.E3.83.BC.E3.81.AB.E8.BF.BD.E5.8A.A0&#34;&gt;Flatpak の .desktop ファイルをメニューに追加&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://zenn.dev/compass/articles/e1f4c88e78b721&#34;&gt;Wayland環境でChromiumベースのソフトをいい感じに使う&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 id=&#34;vscode&#34;&gt;VSCode&lt;/h3&gt;
-&lt;p&gt;AltキーでのIME切り替えとVSCodeのショートカット（メニューフォーカス）が競合するのでVSCodeのAltキーショートカットを無効にする。settings.jsonの以下の項目を設定する&lt;/p&gt;
+&lt;p&gt;AltキーでのIME切り替えとVSCodeのショートカット（メニューフォーカス）が競合するのでVSCodeのAltキーショートカットを無効にする。settings.jsonの以下の項目を設定する。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ba2121&#34;&gt;&amp;#34;window.customMenuBarAltFocus&amp;#34;&lt;/span&gt;&lt;span style=&#34;&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;&#34;&gt;,&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ba2121&#34;&gt;&amp;#34;window.enableMenuBarMnemonics&amp;#34;&lt;/span&gt;&lt;span style=&#34;&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#008000;font-weight:bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;&#34;&gt;,&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ba2121&#34;&gt;&amp;#34;window.titleBarStyle&amp;#34;&lt;/span&gt;&lt;span style=&#34;&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ba2121&#34;&gt;&amp;#34;custom&amp;#34;&lt;/span&gt;
@@ -52,12 +52,12 @@ Braveのデスクトップファイルは
 &lt;li&gt;&lt;a href=&#34;https://qiita.com/Yana_023_/items/7db6d500942457861c36&#34;&gt;vscodeでAltを使ってIME切り替えをするとメニューに飛んでしまう人向け&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://stackoverflow.com/questions/48044429/override-alt-to-toggle-menu-bar-on-vs-code&#34;&gt;Override &lt;!-- raw HTML omitted --&gt; to toggle menu bar on VS CODE&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;VSCodeもBraveと同様の引数を渡すことでWaylandで起動できる&lt;/p&gt;
+&lt;p&gt;VSCodeもBraveと同様の引数を渡すことでWaylandで起動できる。&lt;/p&gt;
 &lt;h3 id=&#34;jetbrains-ide&#34;&gt;JetBrains IDE&lt;/h3&gt;
 &lt;p&gt;Waylandのサポートは現在開発中。当面はXWaylandで起動する。fractionalスケーリングを設定しても問題なさそう。
 IME有効時に入力ウインドウが表示されない。&lt;/p&gt;
 &lt;h3 id=&#34;その他&#34;&gt;その他&lt;/h3&gt;
-&lt;p&gt;xlsclientsコマンドでどのアプリケーションがxwayland上で動作しているか確認できる&lt;/p&gt;
+&lt;p&gt;xlsclientsコマンドでどのアプリケーションがxwayland上で動作しているか確認できる。&lt;/p&gt;
 </description>
     </item>
     
